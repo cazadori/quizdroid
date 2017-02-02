@@ -1,6 +1,7 @@
 package edu.washington.dubeh.quizdroid;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,9 +15,12 @@ public class Overview extends Activity {
     private String[][] possibleAnswers;
     private int[] answers;
     private String description;
-    public final static String EXTRA_OVERVIEW = "edu.washington.dubeh.quizdroid.overview.count";
-    public static Quiz quiz;
     private int current = 0;
+    private Button button;
+    private QuizQuestion quizQuestion;
+    private int questionsCorrect = 0;
+
+    public final static String EXTRA_OVERVIEW = "edu.washington.dubeh.quizdroid.overview.count";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +29,7 @@ public class Overview extends Activity {
 
         Intent intent = getIntent();
         String selected = intent.getStringExtra(MainActivity.EXTRA_CATEGORY);
-        Button begin = (Button) findViewById(R.id.begin);
-        TextView summary = (TextView) findViewById(R.id.description);
-        TextView numOfQs = (TextView) findViewById(R.id.questions);
+        button = (Button) findViewById(R.id.begin);
 
         if(selected.equals("Math")) {
             questions = new String[]{"Math Question 1", "Math Question 2",
@@ -48,17 +50,52 @@ public class Overview extends Activity {
                 {"answer 1", "answer 2", "answer 3", "answer 4"}};
         answers = new int[]{0, 1, 3, 2};
 
-        summary.setText(description);
-        numOfQs.setText("There are " + questions.length + " questions");
-        quiz = new Quiz(questions, possibleAnswers, answers);
+        QuizOverview quizOverview = QuizOverview.newInstance(description, questions.length);
+        FragmentTransaction overviewTransaction = getFragmentManager().beginTransaction();
+        overviewTransaction.replace(R.id.fragment_placeholder, quizOverview);
+        overviewTransaction.commit();
 
-        begin.setOnClickListener(new View.OnClickListener() {
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(Overview.this, Question.class);
-                intent.putExtra(EXTRA_OVERVIEW, 0);
-                startActivity(intent);
+                String bText = button.getText().toString();
+                if(bText.equals("Begin") || bText.equals("Next")) {
+                    //start question fragment
+                    button.setText("Submit");
+                    button.setEnabled(false);
+
+                    quizQuestion = QuizQuestion.newInstance(questions[current], possibleAnswers[current]);
+                    FragmentTransaction overviewTransaction = getFragmentManager().beginTransaction();
+                    overviewTransaction.replace(R.id.fragment_placeholder, quizQuestion);
+                    overviewTransaction.commit();
+
+                } else if(bText.equals("Submit")) {
+                    //start answer fragment
+                    String answer = quizQuestion.getAnswer();
+                    if(answer.equals(possibleAnswers[current][answers[current]])) {
+                        questionsCorrect++;
+                    }
+
+                    Answer answerFragment = Answer.newInstance(questionsCorrect, questions.length,
+                            answer, possibleAnswers[current][answers[current]]);
+                    FragmentTransaction overviewTransaction = getFragmentManager().beginTransaction();
+                    overviewTransaction.replace(R.id.fragment_placeholder, answerFragment);
+                    overviewTransaction.commit();
+                    current++;
+                    
+                    if(current == questions.length) {
+                        button.setText("Finish");
+                    } else {
+                        button.setText("Next");
+                    }
+                } else {
+                    //go to main activity
+                    //bText should equal Finish
+                    Intent intent = new Intent(Overview.this, MainActivity.class);
+                    startActivity(intent);
+                }
             }
         });
+
     }
 }

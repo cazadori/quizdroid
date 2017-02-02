@@ -1,0 +1,33 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="edu.washington.dubeh.quizdroid.Answer">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/answerGiven"
+            android:gravity="center"
+            android:textSize="20dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/correctAnswer"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_below="@+id/answerGiven"/>
+        <TextView
+            android:id="@+id/correctAnswers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You have __ out of __ correct"
+            android:gravity="center"
+            android:textSize="20dp"
+            android:layout_below="@+id/correctAnswer"/>
+    </RelativeLayout>
+
+</FrameLayout>
