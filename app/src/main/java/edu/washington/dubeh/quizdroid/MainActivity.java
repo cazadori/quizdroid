@@ -8,16 +8,27 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
     public final static String EXTRA_CATEGORY = "edu.washington.dubeh.quizdroid.CATEGORY";
-    private String[] categories = {"Math", "Physics", "Marvel Super Heroes"};
+    private String[] categories;
+    private String[] shortDescs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        QuizApp app = (QuizApp)this.getApplication();
+        categories = app.getRepository().getCategories();
+        shortDescs = app.getRepository().getShortDescs();
 
         ListView listView = (ListView) findViewById(R.id.listView);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,

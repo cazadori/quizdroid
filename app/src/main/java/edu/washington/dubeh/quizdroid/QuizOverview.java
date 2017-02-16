@@ -24,11 +24,13 @@ public class QuizOverview extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String DESCRIPTION = "description";
     private static final String QUESTION_COUNT = "question count";
+    private static final String TITLE = "title";
 
     // TODO: Rename and change types of parameters
     private String description;
     private int questionCount;
     private Overview overview;
+    private String title;
 
     private OnFragmentInteractionListener mListener;
 
@@ -45,9 +47,10 @@ public class QuizOverview extends Fragment {
      * @return A new instance of fragment QuizOverview.
      */
     // TODO: Rename and change types and number of parameters
-    public static QuizOverview newInstance(String description, int questionCount) {
+    public static QuizOverview newInstance(String description, int questionCount, String title) {
         QuizOverview fragment = new QuizOverview();
         Bundle args = new Bundle();
+        args.putString(TITLE, title);
         args.putString(DESCRIPTION, description);
         args.putInt(QUESTION_COUNT, questionCount);
         fragment.setArguments(args);
@@ -58,6 +61,7 @@ public class QuizOverview extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            title = getArguments().getString(TITLE);
             description = getArguments().getString(DESCRIPTION);
             questionCount = getArguments().getInt(QUESTION_COUNT);
             overview = (Overview)getActivity();
@@ -70,9 +74,11 @@ public class QuizOverview extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_quiz_overview, container, false);
 
+        TextView tvTitle = (TextView) view.findViewById(R.id.title);
         TextView tvDescription = (TextView) view.findViewById(R.id.description);
         TextView tvQuestionCount = (TextView) view.findViewById(R.id.questions);
 
+        tvTitle.setText(title);
         tvDescription.setText(description);
         tvQuestionCount.setText("There are " + questionCount + " questions");
         return view;
